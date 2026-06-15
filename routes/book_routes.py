@@ -1,7 +1,6 @@
 from fastapi import APIRouter ,HTTPException
 from logs.loger_config import logger
 from database.book_db import ConnectDb ,BookDB
-# from models import book_model
 
 router = APIRouter(prefix="/books")
 db = ConnectDb()
@@ -71,6 +70,18 @@ def set_available(id:int ,val:bool ,member_id:int):
     except Exception as e:
         logger.error(e)
 
+@router.put("/books/{id}/borrow/{member_id}")
+def set_available(id:int ,val:bool ,member_id:int):
+    try:
+        available = book_db.set_available(id ,val ,member_id)
+        logger.info("/borrowed book")
+        if available:
+            return "borrowed successful"
+        else:
+            raise HTTPException(status_code=404 ,detail="id not found") 
+    except Exception as e:
+        logger.error(e)
+
 @router.get("/reports/summary/total")
 def count_total_books():
     try:
@@ -103,7 +114,7 @@ def count_by_genre(genre:str):
     try:
         sum_of_genre_books = book_db.count_by_genre(genre)
         logger.info("GET //reports/books-by-genre")
-        return sum_of_genre_books
+        return {"genre":genre},sum_of_genre_books
     except Exception as e:
         logger.error(e)
 

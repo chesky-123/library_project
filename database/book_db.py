@@ -1,6 +1,5 @@
 from database.db_connection import ConnectDb
 from logs.loger_config import logger
-from models import book_model
 
 
 
@@ -36,8 +35,6 @@ class BookDB:
                             """,(data["title"],data["author"],data["genre"] ,id))
         self.connection.commit()
         return self.cursor.rowcount > 0
-    
-
 
     def set_available(self, id, val,member_id):
         self.cursor.execute("""update books 
@@ -61,7 +58,7 @@ class BookDB:
         return self.cursor.fetchall()
 
     def count_by_genre(self,genre):
-        self.cursor.execute("SELECT count(*) FROM books GROUP BY %s",(genre,))
+        self.cursor.execute("SELECT count(*) as count FROM books GROUP BY %s",(genre,))
         return self.cursor.fetchall()
 
     def count_active_borrows_by_member(self,member_id):
